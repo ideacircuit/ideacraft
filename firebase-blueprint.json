@@ -1,0 +1,561 @@
+{
+  "entities": {
+    "SiteSettings": {
+      "title": "SiteSettings",
+      "description": "Editable website copy, hero configuration, service summaries, and hero screenshot override managed from the IdeaCircuit Admin Dashboard.",
+      "type": "object",
+      "properties": {
+        "heroLabel": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120
+        },
+        "heroHeadline": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 180
+        },
+        "heroSubtitle": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500
+        },
+        "heroPrimaryCta": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 40
+        },
+        "heroSecondaryCta": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 40
+        },
+        "heroDisplayMode": {
+          "type": "string",
+          "enum": ["collage", "screenshot"]
+        },
+        "heroScreenshotUrl": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "heroWebImage": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "heroGraphicImage": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "heroAutomationImage": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "introHeadline": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 200
+        },
+        "introLead": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 600
+        },
+        "introBody": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 1000
+        },
+        "aboutHeadline": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 200
+        },
+        "aboutSubtitle": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 600
+        },
+        "ctaHeadline": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 200
+        },
+        "ctaSubtitle": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500
+        },
+        "footerTagline": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 400
+        },
+        "contactEmail": {
+          "type": "string",
+          "format": "email",
+          "minLength": 5,
+          "maxLength": 160
+        },
+        "whatsappNumber": {
+          "type": "string",
+          "minLength": 7,
+          "maxLength": 30
+        },
+        "phoneNumber": {
+          "type": "string",
+          "minLength": 7,
+          "maxLength": 30
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedBy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "heroLabel",
+        "heroHeadline",
+        "heroSubtitle",
+        "heroPrimaryCta",
+        "heroSecondaryCta",
+        "heroDisplayMode",
+        "heroScreenshotUrl",
+        "heroWebImage",
+        "heroGraphicImage",
+        "heroAutomationImage",
+        "introHeadline",
+        "introLead",
+        "introBody",
+        "aboutHeadline",
+        "aboutSubtitle",
+        "ctaHeadline",
+        "ctaSubtitle",
+        "footerTagline",
+        "contactEmail",
+        "whatsappNumber",
+        "updatedAt",
+        "updatedBy"
+      ]
+    },
+    "PortfolioProject": {
+      "title": "PortfolioProject",
+      "description": "A portfolio case study or studio concept uploaded via the Admin Dashboard and rendered across Home and Portfolio.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 140
+        },
+        "category": {
+          "type": "string",
+          "enum": ["Website Design", "Graphic Design", "AI Automation"]
+        },
+        "projectType": {
+          "type": "string",
+          "enum": ["Studio Concept", "Design Exploration", "Client Project"]
+        },
+        "year": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 10
+        },
+        "imageUrl": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "imageAlt": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 240
+        },
+        "shortDescription": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 400
+        },
+        "overview": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 2000
+        },
+        "creativeApproach": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 1500
+        },
+        "deliverables": {
+          "type": "array"
+        },
+        "outcomeFocus": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 400
+        },
+        "liveUrl": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "featured": {
+          "type": "boolean"
+        },
+        "authorId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "title",
+        "category",
+        "projectType",
+        "year",
+        "imageUrl",
+        "imageAlt",
+        "shortDescription",
+        "overview",
+        "creativeApproach",
+        "deliverables",
+        "outcomeFocus",
+        "featured",
+        "authorId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "A verified client testimonial uploaded via the Admin Dashboard that renders automatically on the website.",
+      "type": "object",
+      "properties": {
+        "clientName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "role": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "company": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "serviceCategory": {
+          "type": "string",
+          "enum": ["Website Design", "Graphic Design", "AI Automation", "Multi-Service Project"]
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 1000
+        },
+        "avatarUrl": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "featured": {
+          "type": "boolean"
+        },
+        "authorId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "clientName",
+        "role",
+        "company",
+        "serviceCategory",
+        "quote",
+        "avatarUrl",
+        "featured",
+        "authorId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Authorized admin user record enabling CMS management permissions.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 200
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin"]
+        },
+        "addedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["email", "role", "addedAt"]
+    },
+    "Inquiry": {
+      "title": "Inquiry",
+      "description": "Validated contact form inquiry submitted by a visitor and routed to the studio Gmail inbox.",
+      "type": "object",
+      "properties": {
+        "referenceId": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 32
+        },
+        "name": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 5,
+          "maxLength": 160
+        },
+        "service": {
+          "type": "string",
+          "enum": ["Website Design", "Graphic Design", "AI Automation", "Multi-Service Project"]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 15,
+          "maxLength": 4000
+        },
+        "recipientEmail": {
+          "type": "string",
+          "format": "email",
+          "minLength": 5,
+          "maxLength": 160
+        },
+        "deliveryStatus": {
+          "type": "string",
+          "enum": ["sent", "pending_activation", "inbox_only"]
+        },
+        "deliveryChannel": {
+          "type": "string",
+          "enum": ["gmail_smtp", "formsubmit", "inbox"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "referenceId",
+        "name",
+        "email",
+        "service",
+        "message",
+        "recipientEmail",
+        "deliveryStatus",
+        "deliveryChannel",
+        "createdAt"
+      ]
+    },
+    "Suggestion": {
+      "title": "Suggestion",
+      "description": "Visitor suggestion or client question submitted through the AI Suggestion Box along with the generated AI client reply.",
+      "type": "object",
+      "properties": {
+        "senderName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "senderEmail": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "topic": {
+          "type": "string",
+          "enum": ["Project Idea", "Service Question", "Website Feedback", "AI Automation Idea"]
+        },
+        "suggestion": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 2000
+        },
+        "aiReply": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000
+        },
+        "recommendedService": {
+          "type": "string",
+          "enum": ["Website Design", "Graphic Design", "AI Automation", "Multi-Service Project"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["new", "reviewed"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "senderName",
+        "senderEmail",
+        "topic",
+        "suggestion",
+        "aiReply",
+        "recommendedService",
+        "status",
+        "createdAt"
+      ]
+    },
+    "CallBooking": {
+      "title": "CallBooking",
+      "description": "Scheduled phone call or WhatsApp call booking submitted by a prospective client.",
+      "type": "object",
+      "properties": {
+        "referenceId": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 32
+        },
+        "clientName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120
+        },
+        "clientPhone": {
+          "type": "string",
+          "minLength": 7,
+          "maxLength": 30
+        },
+        "clientEmail": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "channel": {
+          "type": "string",
+          "enum": ["Phone Call", "WhatsApp Call"]
+        },
+        "service": {
+          "type": "string",
+          "enum": ["Website Design", "Graphic Design", "AI Automation", "Multi-Service Project"]
+        },
+        "preferredDate": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 20
+        },
+        "preferredTime": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 40
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "studioLine": {
+          "type": "string",
+          "minLength": 7,
+          "maxLength": 30
+        },
+        "deliveryStatus": {
+          "type": "string",
+          "enum": ["sent", "pending_activation", "inbox_only"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "confirmed", "completed"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "referenceId",
+        "clientName",
+        "clientPhone",
+        "clientEmail",
+        "channel",
+        "service",
+        "preferredDate",
+        "preferredTime",
+        "notes",
+        "studioLine",
+        "deliveryStatus",
+        "status",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/site_settings/{settingId}": {
+      "schema": {
+        "$ref": "#/entities/SiteSettings"
+      },
+      "description": "Publicly readable website configuration and hero content managed by admins."
+    },
+    "/portfolio_projects/{projectId}": {
+      "schema": {
+        "$ref": "#/entities/PortfolioProject"
+      },
+      "description": "Publicly readable portfolio projects uploaded and managed by admins."
+    },
+    "/testimonials/{testimonialId}": {
+      "schema": {
+        "$ref": "#/entities/Testimonial"
+      },
+      "description": "Publicly readable verified client testimonials uploaded and managed by admins."
+    },
+    "/admins/{userId}": {
+      "schema": {
+        "$ref": "#/entities/AdminUser"
+      },
+      "description": "Private admin access registry."
+    },
+    "/inquiries/{inquiryId}": {
+      "schema": {
+        "$ref": "#/entities/Inquiry"
+      },
+      "description": "Contact form inquiries (public create, strict admin-only read/delete for PII isolation)."
+    },
+    "/suggestions/{suggestionId}": {
+      "schema": {
+        "$ref": "#/entities/Suggestion"
+      },
+      "description": "AI Suggestion Box submissions and replies (public create, strict admin-only read/update/delete for PII isolation)."
+    },
+    "/call_bookings/{bookingId}": {
+      "schema": {
+        "$ref": "#/entities/CallBooking"
+      },
+      "description": "Scheduled phone and WhatsApp call bookings (public create, strict admin-only read/update/delete for PII isolation)."
+    }
+  }
+}

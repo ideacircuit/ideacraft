@@ -1,0 +1,327 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global safety net: deny all reads and writes by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helper Primitives ---
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isVerified() && (
+        request.auth.token.email == 'adebayoaa2002@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // --- Validation Blueprints ---
+    function isValidSiteSettings(data) {
+      return data.keys().hasAll([
+        'heroLabel', 'heroHeadline', 'heroSubtitle', 'heroPrimaryCta', 'heroSecondaryCta',
+        'heroDisplayMode', 'heroScreenshotUrl', 'heroWebImage', 'heroGraphicImage', 'heroAutomationImage',
+        'introHeadline', 'introLead', 'introBody', 'aboutHeadline', 'aboutSubtitle',
+        'ctaHeadline', 'ctaSubtitle', 'footerTagline', 'contactEmail', 'whatsappNumber',
+        'updatedAt', 'updatedBy'
+      ])
+      && data.keys().hasOnly([
+        'heroLabel', 'heroHeadline', 'heroSubtitle', 'heroPrimaryCta', 'heroSecondaryCta',
+        'heroDisplayMode', 'heroScreenshotUrl', 'heroWebImage', 'heroGraphicImage', 'heroAutomationImage',
+        'introHeadline', 'introLead', 'introBody', 'aboutHeadline', 'aboutSubtitle',
+        'ctaHeadline', 'ctaSubtitle', 'footerTagline', 'contactEmail', 'whatsappNumber', 'phoneNumber',
+        'updatedAt', 'updatedBy'
+      ])
+      && data.heroLabel is string && data.heroLabel.size() >= 2 && data.heroLabel.size() <= 120
+      && data.heroHeadline is string && data.heroHeadline.size() >= 5 && data.heroHeadline.size() <= 180
+      && data.heroSubtitle is string && data.heroSubtitle.size() >= 10 && data.heroSubtitle.size() <= 500
+      && data.heroPrimaryCta is string && data.heroPrimaryCta.size() >= 2 && data.heroPrimaryCta.size() <= 40
+      && data.heroSecondaryCta is string && data.heroSecondaryCta.size() >= 2 && data.heroSecondaryCta.size() <= 40
+      && data.heroDisplayMode in ['collage', 'screenshot']
+      && data.heroScreenshotUrl is string && data.heroScreenshotUrl.size() <= 2048
+      && data.heroWebImage is string && data.heroWebImage.size() <= 2048
+      && data.heroGraphicImage is string && data.heroGraphicImage.size() <= 2048
+      && data.heroAutomationImage is string && data.heroAutomationImage.size() <= 2048
+      && data.introHeadline is string && data.introHeadline.size() >= 5 && data.introHeadline.size() <= 200
+      && data.introLead is string && data.introLead.size() >= 10 && data.introLead.size() <= 600
+      && data.introBody is string && data.introBody.size() >= 10 && data.introBody.size() <= 1000
+      && data.aboutHeadline is string && data.aboutHeadline.size() >= 5 && data.aboutHeadline.size() <= 200
+      && data.aboutSubtitle is string && data.aboutSubtitle.size() >= 10 && data.aboutSubtitle.size() <= 600
+      && data.ctaHeadline is string && data.ctaHeadline.size() >= 5 && data.ctaHeadline.size() <= 200
+      && data.ctaSubtitle is string && data.ctaSubtitle.size() >= 10 && data.ctaSubtitle.size() <= 500
+      && data.footerTagline is string && data.footerTagline.size() >= 10 && data.footerTagline.size() <= 400
+      && data.contactEmail is string && data.contactEmail.size() >= 5 && data.contactEmail.size() <= 160
+      && data.whatsappNumber is string && data.whatsappNumber.size() >= 7 && data.whatsappNumber.size() <= 30
+      && (!('phoneNumber' in data) || (data.phoneNumber is string && data.phoneNumber.size() >= 7 && data.phoneNumber.size() <= 30))
+      && data.updatedAt == request.time
+      && data.updatedBy is string && data.updatedBy == request.auth.uid;
+    }
+
+    function isValidPortfolioProject(data) {
+      return data.keys().hasAll([
+        'title', 'category', 'projectType', 'year', 'imageUrl', 'imageAlt',
+        'shortDescription', 'overview', 'creativeApproach', 'deliverables',
+        'outcomeFocus', 'featured', 'authorId', 'createdAt', 'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'title', 'category', 'projectType', 'year', 'imageUrl', 'imageAlt',
+        'shortDescription', 'overview', 'creativeApproach', 'deliverables',
+        'outcomeFocus', 'liveUrl', 'featured', 'authorId', 'createdAt', 'updatedAt'
+      ])
+      && data.title is string && data.title.size() >= 2 && data.title.size() <= 140
+      && data.category in ['Website Design', 'Graphic Design', 'AI Automation']
+      && data.projectType in ['Studio Concept', 'Design Exploration', 'Client Project']
+      && data.year is string && data.year.size() >= 4 && data.year.size() <= 10
+      && data.imageUrl is string && data.imageUrl.size() >= 1 && data.imageUrl.size() <= 2048
+      && data.imageAlt is string && data.imageAlt.size() >= 2 && data.imageAlt.size() <= 240
+      && data.shortDescription is string && data.shortDescription.size() >= 10 && data.shortDescription.size() <= 400
+      && data.overview is string && data.overview.size() >= 10 && data.overview.size() <= 2000
+      && data.creativeApproach is string && data.creativeApproach.size() >= 10 && data.creativeApproach.size() <= 1500
+      && data.deliverables is list && data.deliverables.size() >= 1 && data.deliverables.size() <= 10 && data.deliverables[0] is string
+      && data.outcomeFocus is string && data.outcomeFocus.size() >= 5 && data.outcomeFocus.size() <= 400
+      && (!('liveUrl' in data) || (data.liveUrl is string && data.liveUrl.size() <= 2048))
+      && data.featured is bool
+      && data.authorId is string && data.authorId.size() >= 1 && data.authorId.size() <= 128
+      && data.createdAt is timestamp
+      && data.updatedAt == request.time;
+    }
+
+    function isValidTestimonial(data) {
+      return data.keys().hasAll([
+        'clientName', 'role', 'company', 'serviceCategory', 'quote',
+        'avatarUrl', 'featured', 'authorId', 'createdAt', 'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'clientName', 'role', 'company', 'serviceCategory', 'quote',
+        'avatarUrl', 'featured', 'authorId', 'createdAt', 'updatedAt'
+      ])
+      && data.clientName is string && data.clientName.size() >= 2 && data.clientName.size() <= 100
+      && data.role is string && data.role.size() >= 2 && data.role.size() <= 100
+      && data.company is string && data.company.size() >= 1 && data.company.size() <= 120
+      && data.serviceCategory in ['Website Design', 'Graphic Design', 'AI Automation', 'Multi-Service Project']
+      && data.quote is string && data.quote.size() >= 10 && data.quote.size() <= 1000
+      && data.avatarUrl is string && data.avatarUrl.size() <= 2048
+      && data.featured is bool
+      && data.authorId is string && data.authorId.size() >= 1 && data.authorId.size() <= 128
+      && data.createdAt is timestamp
+      && data.updatedAt == request.time;
+    }
+
+    function isValidAdminUser(data) {
+      return data.keys().hasAll(['email', 'role', 'addedAt'])
+        && data.keys().hasOnly(['email', 'role', 'addedAt'])
+        && data.email is string && data.email.size() >= 3 && data.email.size() <= 200
+        && data.role == 'admin'
+        && data.addedAt == request.time;
+    }
+
+    function isValidInquiry(data) {
+      return data.keys().hasAll([
+        'referenceId', 'name', 'email', 'service', 'message',
+        'recipientEmail', 'deliveryStatus', 'deliveryChannel', 'createdAt'
+      ])
+      && data.keys().hasOnly([
+        'referenceId', 'name', 'email', 'service', 'message',
+        'recipientEmail', 'deliveryStatus', 'deliveryChannel', 'createdAt'
+      ])
+      && data.referenceId is string && data.referenceId.size() >= 4 && data.referenceId.size() <= 32
+      && data.name is string && data.name.size() >= 2 && data.name.size() <= 120
+      && data.email is string && data.email.size() >= 5 && data.email.size() <= 160
+      && data['service'] in ['Website Design', 'Graphic Design', 'AI Automation', 'Multi-Service Project']
+      && data.message is string && data.message.size() >= 15 && data.message.size() <= 4000
+      && data.recipientEmail is string && data.recipientEmail.size() >= 5 && data.recipientEmail.size() <= 160
+      && data.deliveryStatus in ['sent', 'pending_activation', 'inbox_only']
+      && data.deliveryChannel in ['gmail_smtp', 'formsubmit', 'inbox']
+      && data.createdAt == request.time;
+    }
+
+    function isValidSuggestion(data) {
+      return data.keys().hasAll([
+        'senderName', 'senderEmail', 'topic', 'suggestion',
+        'aiReply', 'recommendedService', 'status', 'createdAt'
+      ])
+      && data.keys().hasOnly([
+        'senderName', 'senderEmail', 'topic', 'suggestion',
+        'aiReply', 'recommendedService', 'status', 'createdAt'
+      ])
+      && data.senderName is string && data.senderName.size() >= 1 && data.senderName.size() <= 100
+      && data.senderEmail is string && data.senderEmail.size() <= 160
+      && data.topic in ['Project Idea', 'Service Question', 'Website Feedback', 'AI Automation Idea']
+      && data.suggestion is string && data.suggestion.size() >= 5 && data.suggestion.size() <= 2000
+      && data.aiReply is string && data.aiReply.size() >= 1 && data.aiReply.size() <= 3000
+      && data.recommendedService in ['Website Design', 'Graphic Design', 'AI Automation', 'Multi-Service Project']
+      && data.status in ['new', 'reviewed']
+      && data.createdAt is timestamp;
+    }
+
+    function isValidCallBooking(data) {
+      return data.keys().hasAll([
+        'referenceId', 'clientName', 'clientPhone', 'clientEmail', 'channel',
+        'service', 'preferredDate', 'preferredTime', 'notes', 'studioLine',
+        'deliveryStatus', 'status', 'createdAt'
+      ])
+      && data.keys().hasOnly([
+        'referenceId', 'clientName', 'clientPhone', 'clientEmail', 'channel',
+        'service', 'preferredDate', 'preferredTime', 'notes', 'studioLine',
+        'deliveryStatus', 'status', 'createdAt'
+      ])
+      && data.referenceId is string && data.referenceId.size() >= 4 && data.referenceId.size() <= 32
+      && data.clientName is string && data.clientName.size() >= 2 && data.clientName.size() <= 120
+      && data.clientPhone is string && data.clientPhone.size() >= 7 && data.clientPhone.size() <= 30
+      && data.clientEmail is string && data.clientEmail.size() <= 160
+      && data.channel in ['Phone Call', 'WhatsApp Call']
+      && data['service'] in ['Website Design', 'Graphic Design', 'AI Automation', 'Multi-Service Project']
+      && data.preferredDate is string && data.preferredDate.size() >= 4 && data.preferredDate.size() <= 20
+      && data.preferredTime is string && data.preferredTime.size() >= 2 && data.preferredTime.size() <= 40
+      && data.notes is string && data.notes.size() <= 2000
+      && data.studioLine is string && data.studioLine.size() >= 7 && data.studioLine.size() <= 30
+      && data.deliveryStatus in ['sent', 'pending_activation', 'inbox_only']
+      && data.status in ['pending', 'confirmed', 'completed']
+      && data.createdAt is timestamp;
+    }
+
+    // --- Collection Rules ---
+
+    // 1. Site Settings (public read for website, admin-only write)
+    match /site_settings/{settingId} {
+      allow get: if isValidId(settingId);
+      allow list: if false;
+      allow create: if isVerified()
+        && isValidId(settingId)
+        && settingId == 'main'
+        && isValidSiteSettings(incoming())
+        && isAdmin();
+      allow update: if isVerified()
+        && isValidId(settingId)
+        && settingId == 'main'
+        && isValidSiteSettings(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'heroLabel', 'heroHeadline', 'heroSubtitle', 'heroPrimaryCta', 'heroSecondaryCta',
+          'heroDisplayMode', 'heroScreenshotUrl', 'heroWebImage', 'heroGraphicImage', 'heroAutomationImage',
+          'introHeadline', 'introLead', 'introBody', 'aboutHeadline', 'aboutSubtitle',
+          'ctaHeadline', 'ctaSubtitle', 'footerTagline', 'contactEmail', 'whatsappNumber', 'phoneNumber',
+          'updatedAt', 'updatedBy'
+        ])
+        && isAdmin();
+      allow delete: if false;
+    }
+
+    // 2. Portfolio Projects (public read for website, admin-only write)
+    match /portfolio_projects/{projectId} {
+      allow get: if isValidId(projectId);
+      allow list: if true;
+      allow create: if isVerified()
+        && isValidId(projectId)
+        && isValidPortfolioProject(incoming())
+        && incoming().authorId == request.auth.uid
+        && incoming().createdAt == request.time
+        && isAdmin();
+      allow update: if isVerified()
+        && isValidId(projectId)
+        && isValidPortfolioProject(incoming())
+        && incoming().authorId == existing().authorId
+        && incoming().createdAt == existing().createdAt
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'title', 'category', 'projectType', 'year', 'imageUrl', 'imageAlt',
+          'shortDescription', 'overview', 'creativeApproach', 'deliverables',
+          'outcomeFocus', 'liveUrl', 'featured', 'updatedAt'
+        ])
+        && isAdmin();
+      allow delete: if isVerified() && isValidId(projectId) && isAdmin();
+    }
+
+    // 3. Testimonials (public read for website, admin-only write)
+    match /testimonials/{testimonialId} {
+      allow get: if isValidId(testimonialId);
+      allow list: if true;
+      allow create: if isVerified()
+        && isValidId(testimonialId)
+        && isValidTestimonial(incoming())
+        && incoming().authorId == request.auth.uid
+        && incoming().createdAt == request.time
+        && isAdmin();
+      allow update: if isVerified()
+        && isValidId(testimonialId)
+        && isValidTestimonial(incoming())
+        && incoming().authorId == existing().authorId
+        && incoming().createdAt == existing().createdAt
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'clientName', 'role', 'company', 'serviceCategory', 'quote',
+          'avatarUrl', 'featured', 'updatedAt'
+        ])
+        && isAdmin();
+      allow delete: if isVerified() && isValidId(testimonialId) && isAdmin();
+    }
+
+    // 4. Admins registry (private)
+    match /admins/{userId} {
+      allow get: if isVerified() && isValidId(userId) && (request.auth.uid == userId || isAdmin());
+      allow list: if isVerified() && isAdmin();
+      allow create, update: if isVerified() && isValidId(userId) && isValidAdminUser(incoming()) && isAdmin();
+      allow delete: if isVerified() && isValidId(userId) && userId != request.auth.uid && isAdmin();
+    }
+
+    // 5. Contact Form Inquiries (public create with strict validation, strictly admin-only read/delete for PII isolation)
+    match /inquiries/{inquiryId} {
+      allow get: if isVerified() && isValidId(inquiryId) && isAdmin();
+      allow list: if isVerified() && isAdmin();
+      allow create: if isValidId(inquiryId) && isValidInquiry(incoming());
+      allow update: if false;
+      allow delete: if isVerified() && isValidId(inquiryId) && isAdmin();
+    }
+
+    // 6. AI Suggestion Box Entries (public create with status 'new', strict admin-only read/update/delete)
+    match /suggestions/{suggestionId} {
+      allow get: if isVerified() && isValidId(suggestionId) && isAdmin();
+      allow list: if isVerified() && isAdmin();
+      allow create: if isValidId(suggestionId)
+        && isValidSuggestion(incoming())
+        && incoming().status == 'new'
+        && incoming().createdAt == request.time;
+      allow update: if isVerified()
+        && isValidId(suggestionId)
+        && isValidSuggestion(incoming())
+        && incoming().createdAt == existing().createdAt
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status'])
+        && isAdmin();
+      allow delete: if isVerified() && isValidId(suggestionId) && isAdmin();
+    }
+
+    // 7. Booked Calls (public create with status 'pending', strict admin-only read/update/delete for PII isolation)
+    match /call_bookings/{bookingId} {
+      allow get: if isVerified() && isValidId(bookingId) && isAdmin();
+      allow list: if isVerified() && isAdmin();
+      allow create: if isValidId(bookingId)
+        && isValidCallBooking(incoming())
+        && incoming().status == 'pending'
+        && incoming().createdAt == request.time;
+      allow update: if isVerified()
+        && isValidId(bookingId)
+        && isValidCallBooking(incoming())
+        && incoming().createdAt == existing().createdAt
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status'])
+        && isAdmin();
+      allow delete: if isVerified() && isValidId(bookingId) && isAdmin();
+    }
+  }
+}
