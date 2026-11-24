@@ -104,10 +104,10 @@ export function AboutPage() {
           <div className="rounded-3xl overflow-hidden border border-black/10 bg-[#E3E3DF] aspect-[16/9] max-h-[560px] w-full">
             <StudioImage
               src={STUDIO_IMAGES.aboutStudio}
-              alt="Daylit creative digital studio table with print swatches, typography notebooks, and clean workstation"
+              alt="Daylit creative digital studio table featuring the IdeaCircuit founder reviewing colour swatches and sketching layouts"
               loading="eager"
               fallbackTitle="IdeaCircuit Studio Workspace"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
               containerClassName="w-full h-full"
             />
           </div>

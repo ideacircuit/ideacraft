@@ -35,9 +35,13 @@ interface AiSuggestionResult {
   actionIdeas: string[];
 }
 
-export function SuggestionBoxWidget() {
+interface SuggestionBoxWidgetProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export function SuggestionBoxWidget({open, onClose}: SuggestionBoxWidgetProps) {
   const {siteSettings, submitSuggestionToFirestore} = useStudio();
-  const [open, setOpen] = useState(false);
 
   const [topic, setTopic] = useState<SuggestionTopic>('Project Idea');
   const [senderName, setSenderName] = useState('');
@@ -109,51 +113,40 @@ export function SuggestionBoxWidget() {
     }
   };
 
+  if (!open) {
+    return null;
+  }
+
   return (
-    <div className="fixed bottom-5 right-5 z-50">
-      {!open ? (
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-label="Open AI Suggestion Box"
-          className="group inline-flex items-center gap-2.5 bg-[#111111] hover:bg-[#232320] text-white pl-4 pr-5 py-3 rounded-full shadow-xl border border-white/15 transition-all cursor-pointer"
-        >
-          <span className="w-7 h-7 rounded-full bg-[#B9F53A] text-[#111111] flex items-center justify-center shrink-0">
-            <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-          </span>
-          <span className="text-xs sm:text-sm font-semibold whitespace-nowrap">
-            AI Suggestion Box
-          </span>
-        </button>
-      ) : (
-        <section
-          aria-label="IdeaCircuit AI Suggestion Box"
-          className="w-[min(410px,calc(100vw-2rem))] max-h-[85vh] flex flex-col bg-white rounded-3xl border border-black/15 shadow-2xl overflow-hidden"
-        >
-          {/* Header */}
-          <div className="bg-[#111111] text-white px-5 py-4 flex items-center justify-between gap-3 shrink-0">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-full bg-[#B9F53A] text-[#111111] flex items-center justify-center shrink-0">
-                <Lightbulb className="w-4 h-4" aria-hidden="true" />
-              </div>
-              <div className="min-w-0">
-                <h2 className="font-display text-sm font-bold text-white truncate">
-                  AI Suggestion Box &amp; Instant Reply
-                </h2>
-                <p className="text-[11px] text-neutral-300 truncate">
-                  Share feedback or ask anything — get an instant studio reply
-                </p>
-              </div>
+    <div className="fixed top-20 right-4 sm:right-6 lg:right-10 z-50">
+      <section
+        aria-label="IdeaCircuit AI Suggestion Box"
+        className="w-[min(410px,calc(100vw-2rem))] max-h-[calc(100vh-6rem)] flex flex-col bg-white rounded-3xl border border-black/15 shadow-2xl overflow-hidden"
+      >
+        {/* Header */}
+        <div className="bg-[#111111] text-white px-5 py-4 flex items-center justify-between gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-full bg-[#B9F53A] text-[#111111] flex items-center justify-center shrink-0">
+              <Lightbulb className="w-4 h-4" aria-hidden="true" />
             </div>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label="Close AI Suggestion Box"
-              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white inline-flex items-center justify-center transition-colors cursor-pointer shrink-0"
-            >
-              <X className="w-4 h-4" aria-hidden="true" />
-            </button>
+            <div className="min-w-0">
+              <h2 className="font-display text-sm font-bold text-white truncate">
+                AI Suggestion Box &amp; Instant Reply
+              </h2>
+              <p className="text-[11px] text-neutral-300 truncate">
+                Share feedback or ask anything — get an instant studio reply
+              </p>
+            </div>
           </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close AI Suggestion Box"
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white inline-flex items-center justify-center transition-colors cursor-pointer shrink-0"
+          >
+            <X className="w-4 h-4" aria-hidden="true" />
+          </button>
+        </div>
 
           {/* Body */}
           <div className="p-5 overflow-y-auto space-y-4">
@@ -205,7 +198,7 @@ export function SuggestionBoxWidget() {
                 <div className="pt-2 flex flex-wrap gap-2">
                   <Link
                     to={`/contact?service=${encodeURIComponent(result.recommendedService)}`}
-                    onClick={() => setOpen(false)}
+                    onClick={onClose}
                     className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#B9F53A] hover:bg-[#A8E828] text-[#111111] text-xs font-semibold px-4 py-2.5 rounded-full transition-colors whitespace-nowrap"
                   >
                     <span>Start {result.recommendedService}</span>
@@ -213,7 +206,7 @@ export function SuggestionBoxWidget() {
                   </Link>
                   <Link
                     to={`/book-call?service=${encodeURIComponent(result.recommendedService)}`}
-                    onClick={() => setOpen(false)}
+                    onClick={onClose}
                     className="inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#E3E3DF] border border-black/15 text-[#111111] text-xs font-semibold px-4 py-2.5 rounded-full transition-colors whitespace-nowrap"
                   >
                     <PhoneCall className="w-3.5 h-3.5" aria-hidden="true" />
@@ -343,8 +336,7 @@ export function SuggestionBoxWidget() {
               </form>
             )}
           </div>
-        </section>
-      )}
+      </section>
     </div>
   );
 }

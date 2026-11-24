@@ -142,7 +142,7 @@ export const STUDIO_IMAGES = {
   editorialPackaging: '/src/assets/images/graphic_design_packaging_print_1794920873938.jpg',
   aiAutomation: '/src/assets/images/ai_automation_workflow_ui_1794920873625.jpg',
   aiAutomationOps: '/src/assets/images/ai_automation_ops_console_1794920873733.jpg',
-  aboutStudio: '/src/assets/images/about_studio_workspace_1794916637544.jpg',
+  aboutStudio: '/src/assets/images/about_studio_portrait_1795441801708.jpg',
   formeHeroScreenshot: '/src/assets/images/forme_hero_screenshot.jpg',
   sereinHeroScreenshot: '/src/assets/images/serein_hero_screenshot.jpg',
 } as const;

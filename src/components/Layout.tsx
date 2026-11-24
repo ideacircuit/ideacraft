@@ -1,6 +1,15 @@
 import {useEffect, useRef, useState} from 'react';
 import {Link, NavLink, Outlet, useLocation} from 'react-router-dom';
-import {ArrowUpRight, ChevronDown, Mail, Menu, MessageCircle, Phone, PhoneCall, X} from 'lucide-react';
+import {
+  ArrowUpRight,
+  ChevronDown,
+  Mail,
+  Menu,
+  MessageCircle,
+  Phone,
+  PhoneCall,
+  X,
+} from 'lucide-react';
 import {useStudio} from '../context/StudioContext';
 import {formatPhoneHref, formatWhatsAppUrl} from '../data/studioData';
 import {SuggestionBoxWidget} from './SuggestionBoxWidget';
@@ -69,6 +78,7 @@ export function Layout() {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [suggestionOpen, setSuggestionOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<number | null>(null);
 
@@ -83,6 +93,7 @@ export function Layout() {
 
     setServicesOpen(false);
     setMobileOpen(false);
+    setSuggestionOpen(false);
 
     if (location.hash) {
       const targetId = location.hash.replace('#', '');
@@ -103,6 +114,7 @@ export function Layout() {
       if (e.key === 'Escape') {
         setServicesOpen(false);
         setMobileOpen(false);
+        setSuggestionOpen(false);
       }
     };
     const handlePointerDown = (e: MouseEvent) => {
@@ -143,14 +155,14 @@ export function Layout() {
     <div className="min-h-screen flex flex-col bg-[#EDEDEB] text-[#111111]">
       {/* Sticky 3-Zone Header */}
       <header className="sticky top-0 z-40 h-16 bg-[#EDEDEB]/92 backdrop-blur-md border-b border-black/10">
-        <div className="max-w-[1360px] mx-auto h-full px-4 sm:px-6 lg:px-10 flex items-center justify-between gap-8">
+        <div className="max-w-[1360px] mx-auto h-full px-4 sm:px-6 lg:px-10 flex items-center justify-between gap-2 sm:gap-4 lg:gap-6">
           {/* Zone 1: Brand Wordmark */}
           <Link
             to="/"
-            className="inline-flex items-center gap-2.5 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#111111]"
+            className="inline-flex items-center gap-2 sm:gap-2.5 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#111111]"
           >
             <IdeaCircuitMark className="w-7 h-7 shrink-0" />
-            <span className="font-display text-lg sm:text-xl font-bold tracking-tight text-[#111111]">
+            <span className="font-display text-base sm:text-xl font-bold tracking-tight text-[#111111]">
               IdeaCircuit
             </span>
           </Link>
@@ -158,7 +170,7 @@ export function Layout() {
           {/* Zone 2: Primary Navigation (5 items in exact order) */}
           <nav
             aria-label="Primary Navigation"
-            className="hidden md:flex items-center gap-7 lg:gap-8"
+            className="hidden md:flex items-center gap-4 lg:gap-7"
           >
             <NavLink to="/" end className={navLinkClass}>
               Home
@@ -234,18 +246,37 @@ export function Layout() {
             </NavLink>
           </nav>
 
-          {/* Zone 3: Single Primary Action + Mobile Hamburger */}
-          <div className="flex items-center gap-3 shrink-0">
+          {/* Zone 3: AI Suggestion Box Text Button + Primary Action + Mobile Hamburger */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setMobileOpen(false);
+                setSuggestionOpen((prev) => !prev);
+              }}
+              aria-expanded={suggestionOpen}
+              className={`inline-flex items-center justify-center rounded-full border px-3 sm:px-4 py-2 lg:py-2.5 text-xs lg:text-sm font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111] ${
+                suggestionOpen
+                  ? 'bg-[#111111] text-white border-[#111111]'
+                  : 'bg-white hover:bg-[#111111] text-[#111111] hover:text-white border-black/15'
+              }`}
+            >
+              AI Suggestion Box
+            </button>
+
             <Link
               to="/contact"
-              className="hidden md:inline-flex items-center justify-center bg-[#B9F53A] hover:bg-[#A8E828] text-[#111111] text-sm font-semibold px-5 py-2.5 rounded-full transition-colors duration-150 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
+              className="hidden md:inline-flex items-center justify-center bg-[#B9F53A] hover:bg-[#A8E828] text-[#111111] text-xs lg:text-sm font-semibold px-4 lg:px-5 py-2 lg:py-2.5 rounded-full transition-colors duration-150 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]"
             >
               Start a Project
             </Link>
 
             <button
               type="button"
-              onClick={() => setMobileOpen((prev) => !prev)}
+              onClick={() => {
+                setSuggestionOpen(false);
+                setMobileOpen((prev) => !prev);
+              }}
               aria-expanded={mobileOpen}
               aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
               className="md:hidden w-11 h-11 inline-flex items-center justify-center rounded-full border border-black/15 bg-white text-[#111111] hover:bg-[#E3E3DF] transition-colors"
@@ -544,7 +575,10 @@ export function Layout() {
           </div>
         </div>
       </footer>
-      <SuggestionBoxWidget />
+      <SuggestionBoxWidget
+        open={suggestionOpen}
+        onClose={() => setSuggestionOpen(false)}
+      />
     </div>
   );
 }
